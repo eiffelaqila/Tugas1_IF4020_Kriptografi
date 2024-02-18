@@ -9,14 +9,13 @@ function App() {
     function: "vigenere",
   })
   const [cipherType, setCipherType] = useState('');
-  const [output, setOutput] = useState(undefined);
+  const [result, setResult] = useState(undefined);
+  const [error, setError] = useState(undefined);
 
   const mapDataToAxiosValue = (d) => {
     const data = {};
     if (d.inputType === "text") {
       data.inputText = d.inputText;
-    } else {
-      data.file = d.file;
     }
 
     if (d.function === "affine") {
@@ -35,6 +34,12 @@ function App() {
     setData(newData);
   }
 
+  const handleChangeFile = (e) => {
+    let newData = {...data};
+    newData.file = e.target.files[0];
+    setData(newData);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -42,21 +47,43 @@ function App() {
     const cipherType = e.nativeEvent.submitter.value;
     setCipherType(cipherType);
     
-    let response = {};
-    if (data.inputType === "text") {
-      response = await axios.post(
-        `${backendUrl}/${data.function}/${cipherType}`,
-        mappedData
-      )
-    } else {
-      // TODO: File handling
-      response = await axios.post(
-        `${backendUrl}/${data.function}/${cipherType}-file}`,
-        mappedData
-      )
+    try {
+      if (data.inputType === "text") {
+        const response = await axios.post(
+          `${backendUrl}/${data.function}/${cipherType}`,
+          mappedData
+        )
+
+        setResult(response.data);
+      } else {
+        const file = data.file;
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await axios.post(
+          `${backendUrl}/${data.function}/${cipherType}-file`,
+          formData,
+          {
+            params: { ...mappedData },
+          },
+        );
+
+        const fileResponse = new File(
+          [response.data],
+          file ? file.name : "result",
+          {
+            type: file ? file.type : 'text/plain',
+          },
+        )
+
+        console.log(fileResponse);
+        setResult(response.data);
+      }
+
+      setError(undefined);
+    } catch (e) {
+      setError(e);
     }
-  
-    setOutput(response.data);
   }
 
   const isType = (type) => data.inputType === type;
@@ -73,7 +100,7 @@ function App() {
           <br />
           - 13520125 - Ikmal Alfaozi
         </h3>
-        <div className="w-full py-2 m-auto">
+        <div className="w-full py-2 my-4">
           <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-2 mt-6">
             <div>
               <label htmlFor="inputType">Input Type</label>
@@ -88,7 +115,7 @@ function App() {
             </div>
             <div className={isType("file") ? "" : "hidden"}>
               <label htmlFor="file">File</label>
-              <input type="file" id="file" placeholder="Enter file" onChange={(e) => handleChange(e)} required={data.inputType === "file"} />
+              <input type="file" id="file" placeholder="Enter file" onChange={(e) => handleChangeFile(e)} required={data.inputType === "file"} accept={data.function !== "vigenereext" ? "text/plain" : undefined} />
             </div>
             <div>
               <label htmlFor="function">Cipher Function</label>
@@ -114,7 +141,7 @@ function App() {
               <label htmlFor="keyB">Key B (Affine only)</label>
               <input type="text" id="keyB" placeholder="Enter key b" onChange={(e) => handleChange(e)} required={data.function === 'affine'} />
             </div>
-            <div className="flex gap-2 my-6">
+            <div className="flex gap-2 mt-6">
               <button type="submit" value="encrypt" className="bg-indigo-700 hover:bg-indigo-600 focus:bg-indigo-600">
                 <FaLock /> Encrypt
               </button>
@@ -124,11 +151,19 @@ function App() {
             </div>
           </form>
         </div>
-        {output && (
-          <div className="w-full py-2 m-auto">
+        {error && (
+          <div className="w-full py-2 my-4">
+            <div className="w-full p-4 mt-4 bg-red-100 border border-red-300 rounded-md">
+              <h2 className="text-xl font-bold text-gray-700">Error</h2>
+              <p>{error.message}</p>
+            </div>
+          </div>
+        )}
+        {result && (
+          <div className="w-full py-2 my-4">
             <h2 className="text-xl font-bold text-gray-700">{cipherType === 'encrypt' ? 'Encrypted' : 'Decrypted'} Text</h2>
             <div className="w-full p-4 mt-4 overflow-x-scroll border border-gray-300 rounded-md bg-gray-50">
-              <p>{output.result}</p>
+              <p>{result}</p>
             </div>
           </div>
         )}
