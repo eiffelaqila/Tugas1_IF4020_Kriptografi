@@ -1,3 +1,5 @@
+import struct
+
 def encrypt(plaintext, key):
     encrypted_text = ''
 
@@ -30,6 +32,32 @@ def decrypt(ciphertext, key):
 
     return decrypted_text        
 
+def encrypt_file(plaindata, key):
+    encrypted_bytes = list()
+
+    for i, datum in enumerate(plaindata):
+        current_byte = int.from_bytes(datum, "big")
+        key_byte = ord(key[i % len(key)])
+
+        encrypted_int = (current_byte + key_byte) % 256
+        encrypted_byte = int.to_bytes(encrypted_int, 1, "big")
+        encrypted_bytes.append(encrypted_byte)
+
+    return b"".join(encrypted_bytes)
+
+def decrypt_file(cipherdata, key):
+    decrypted_bytes = list()
+
+    for i, datum in enumerate(cipherdata):
+        current_byte = int.from_bytes(datum, "big")
+        key_byte = ord(key[i % len(key)])
+
+        decrypted_int = (current_byte - key_byte) % 256
+        decrypted_byte = int.to_bytes(decrypted_int, 1, "big")
+        decrypted_bytes.append(decrypted_byte)
+    
+    return b"".join(decrypted_bytes)     
+
 if __name__ == "__main__":
     plaintext = "Ini adalah pesan rahasia 1."
     key = "kunci"
@@ -43,3 +71,29 @@ if __name__ == "__main__":
     print("Ciphertext:", ciphertext)
     print("Kunci:", key)
     print("Teks Terdekripsi:", decrypted_text)
+    print()
+
+    print("Mengenkripsi File")
+    file = open('../../test/sample-img.jpg', 'rb')
+    data = file.read()
+    data = struct.unpack("c" * (len(data)), data)
+    encryptdata = encrypt_file(data, key)
+    file.close()
+
+    file = open('../../test/encrypted-sample-img.jpg', 'wb')
+    file.write(encryptdata)
+    file.close()
+    print("File Terenkripsi Telah Tersimpan")
+    print()
+
+    print("Mendekripsi File")
+    file = open('../../test/encrypted-sample-img.jpg', 'rb')
+    data = file.read()
+    data = struct.unpack("c" * (len(data)), data)
+    decryptdata = decrypt_file(data, key)
+    file.close()
+
+    file = open('../../test/decrypted-sample-img.jpg', 'wb')
+    file.write(decryptdata)
+    file.close()
+    print("File Terdekripsi Telah Tersimpan")
