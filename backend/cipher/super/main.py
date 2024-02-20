@@ -74,7 +74,7 @@ def encrypt_file(plaindata, key):
 
     for i, datum in enumerate(plaindata):
         current_byte = int.from_bytes(datum, "big")
-        key_byte = ord(key[i % len(key)])
+        key_byte = ord(key[i % key_length])
 
         encrypted_int = (current_byte + key_byte) % 256
         encrypted_bytes.append(encrypted_int)
@@ -125,9 +125,10 @@ def decrypt_file(cipherdata, key):
 
     # Decrypt Transposition Cipher results using Extended Vigenere Cipher
     decrypted_bytes = bytearray()
+    key_length = len(key)
 
     for i, byte in enumerate(decrypted_bytes_tc):
-        key_byte = ord(key[i % len(key)])
+        key_byte = ord(key[i % key_length])
 
         decrypted_int = (byte - key_byte) % 256
         decrypted_bytes.append(decrypted_int)
