@@ -115,6 +115,7 @@ function App() {
           )
 
           setLoading(false);
+          setError(undefined);
           setResult({
             base64: "Too large to display.",
           });
@@ -140,15 +141,13 @@ function App() {
         )
 
         setLoading(false);
+        setError(undefined);
         setResult({
           text: response.data,
           base64: btoa(response.data),
         });
         setFileResult(fileResponse);
       }
-
-      setLoading(false);
-      setError(undefined);
     } catch (e) {
       setLoading(false);
       setError(e);

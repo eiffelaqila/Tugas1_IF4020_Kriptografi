@@ -33,7 +33,7 @@ def decrypt(ciphertext, key):
     return decrypted_text        
 
 def encrypt_file(plaindata, key):
-    encrypted_bytes = bytearray()
+    encrypted_bytes = list()
     key_length = len(key)
 
     for i, datum in enumerate(plaindata):
@@ -41,12 +41,13 @@ def encrypt_file(plaindata, key):
         key_byte = ord(key[i % key_length])
 
         encrypted_int = (current_byte + key_byte) % 256
-        encrypted_bytes.append(encrypted_int)
-
-    return encrypted_bytes
+        encrypted_byte = int.to_bytes(encrypted_int, 1, "big")
+        encrypted_bytes.append(encrypted_byte)
+    
+    return b"".join(encrypted_bytes)
 
 def decrypt_file(cipherdata, key):
-    decrypted_bytes = bytearray()
+    decrypted_bytes = list()
     key_length = len(key)
 
     for i, datum in enumerate(cipherdata):
@@ -54,9 +55,10 @@ def decrypt_file(cipherdata, key):
         key_byte = ord(key[i % key_length])
 
         decrypted_int = (current_byte - key_byte) % 256
-        decrypted_bytes.append(decrypted_int)
+        decrypted_byte = int.to_bytes(decrypted_int, 1, "big")
+        decrypted_bytes.append(decrypted_byte)
     
-    return decrypted_bytes
+    return b"".join(decrypted_bytes)
 
 if __name__ == "__main__":
     plaintext = "Ini adalah pesan rahasia 1."

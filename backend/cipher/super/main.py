@@ -92,11 +92,11 @@ def encrypt_file(plaindata, key):
     # Sorts columns according to key order
     sorted_columns = sorted(range(num_columns), key=lambda x: key[x])
     # Converts a matrix to encrypted text
-    encrypted_bytes = bytearray()
+    encrypted_bytes = list()
     for col in sorted_columns:
         for row in range(num_rows):
-            encrypted_bytes.append(matrix[row][col])
-    return encrypted_bytes
+            encrypted_bytes.append(int.to_bytes(matrix[row][col], 1, "big"))
+    return b"".join(encrypted_bytes)
 
 def decrypt_file(cipherdata, key):
     # Decryption using Transposition Cipher
@@ -124,16 +124,17 @@ def decrypt_file(cipherdata, key):
     decrypted_bytes_tc = decrypted_bytes_tc.rstrip(b'\x00')
 
     # Decrypt Transposition Cipher results using Extended Vigenere Cipher
-    decrypted_bytes = bytearray()
+    decrypted_bytes = list()
     key_length = len(key)
 
     for i, byte in enumerate(decrypted_bytes_tc):
         key_byte = ord(key[i % key_length])
 
         decrypted_int = (byte - key_byte) % 256
-        decrypted_bytes.append(decrypted_int)
+        decrypted_byte = int.to_bytes(decrypted_int, 1, "big")
+        decrypted_bytes.append(decrypted_byte)
     
-    return decrypted_bytes
+    return b"".join(decrypted_bytes)
 
 if __name__ == "__main__":
     plaintext = "Ini adalah pesan rahasia 1."
