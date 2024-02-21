@@ -7,6 +7,10 @@ function App() {
   const [data, setData] = useState({
     inputType: "text",
     function: "vigenere",
+    reflector: "B",
+    rotor1: "I",
+    rotor2: "I",
+    rotor3: "I",
   })
   const [cipherType, setCipherType] = useState('');
 
@@ -24,10 +28,23 @@ function App() {
     if (d.function === "affine") {
       data.keyA = d.keyA;
       data.keyB = d.keyB;
+    } else if (d.function === "enigma") {
+      data.reflector = d.reflector;
+      data.rotor1 = d.rotor1;
+      data.rotor2 = d.rotor2;
+      data.rotor3 = d.rotor3;
+      data.ring1 = d.ring1;
+      data.ring2 = d.ring2;
+      data.ring3 = d.ring3;
+      data.position1 = d.position1;
+      data.position2 = d.position2;
+      data.position3 = d.position3;
+      data.pairs = d.pairs;
     } else {
       data.key = d.key;
     }
     
+    console.log(data);
     return data;
   }
 
@@ -200,11 +217,12 @@ function App() {
                 <option value="affine">Affine Cipher</option>
                 <option value="hill">Hill Cipher</option>
                 <option value="super">Super Enkripsi</option>
+                <option value="enigma">Enigma</option>
               </select>
             </div>
-            <div className={!isFunction('affine')  ? "" : "hidden"}>
+            <div className={!isFunction('affine') && !isFunction('enigma') ? "" : "hidden"}>
               <label htmlFor="key">Key</label>
-              <input type="text" id="key" placeholder="Enter key" onChange={(e) => handleChange(e)} required={data.function !== 'affine'} />
+              <input type="text" id="key" placeholder="Enter key" onChange={(e) => handleChange(e)} required={!['affine', 'enigma'].includes(data.function)} />
             </div>
             <div className={isFunction('affine')  ? "" : "hidden"}>
               <label htmlFor="keyA">Key A (Affine only)</label>
@@ -213,6 +231,79 @@ function App() {
             <div className={isFunction('affine')  ? "" : "hidden"}>
               <label htmlFor="keyB">Key B (Affine only)</label>
               <input type="text" id="keyB" placeholder="Enter key b" onChange={(e) => handleChange(e)} required={data.function === 'affine'} />
+            </div>
+            <div className={`flex flex-col gap-2 ${isFunction('enigma') ? "" : "hidden"}`}>
+              <div>
+                <label htmlFor="reflector">Reflector</label>
+                <select id="reflector" defaultValue="B" onChange={(e) => handleChange(e)}>
+                  <option value="B">UKW-B</option>
+                  <option value="C">UKW-C</option>
+                </select>
+              </div>
+              <div className="flex w-full gap-2">
+                <div className="w-full">
+                  <label htmlFor="rotor1">Rotor 1</label>
+                  <select id="rotor1" defaultValue="I" onChange={(e) => handleChange(e)}>
+                    <option value="I">I</option>
+                    <option value="II">II</option>
+                    <option value="III">III</option>
+                    <option value="IV">IV</option>
+                    <option value="V">V</option>
+                  </select>
+                </div>
+                <div className="w-full">
+                  <label htmlFor="ring1">Ring</label>
+                  <input type="text" id="ring1" placeholder="Enter ring setting (A-Z)" onChange={(e) => handleChange(e)} required={data.function === 'enigma'} />
+                </div>
+                <div className="w-full">
+                  <label htmlFor="position1">Initial position</label>
+                  <input type="text" id="position1" placeholder="Enter position setting (A-Z)" onChange={(e) => handleChange(e)} required={data.function === 'enigma'} />
+                </div>
+              </div>
+              <div className="flex w-full gap-2">
+                <div className="w-full">
+                  <label htmlFor="rotor2">Rotor 2</label>
+                  <select id="rotor2" defaultValue="I" onChange={(e) => handleChange(e)}>
+                    <option value="I">I</option>
+                    <option value="II">II</option>
+                    <option value="III">III</option>
+                    <option value="IV">IV</option>
+                    <option value="V">V</option>
+                  </select>
+                </div>
+                <div className="w-full">
+                  <label htmlFor="ring2">Ring</label>
+                  <input type="text" id="ring2" placeholder="Enter ring setting (A-Z)" onChange={(e) => handleChange(e)} required={data.function === 'enigma'} />
+                </div>
+                <div className="w-full">
+                  <label htmlFor="position2">Initial position</label>
+                  <input type="text" id="position2" placeholder="Enter position setting (A-Z)" onChange={(e) => handleChange(e)} required={data.function === 'enigma'} />
+                </div>
+              </div>
+              <div className="flex w-full gap-2">
+                <div className="w-full">
+                  <label htmlFor="rotor3">Rotor 3</label>
+                  <select id="rotor3" defaultValue="I" onChange={(e) => handleChange(e)}>
+                    <option value="I">I</option>
+                    <option value="II">II</option>
+                    <option value="III">III</option>
+                    <option value="IV">IV</option>
+                    <option value="V">V</option>
+                  </select>
+                </div>
+                <div className="w-full">
+                  <label htmlFor="ring3">Ring</label>
+                  <input type="text" id="ring3" placeholder="Enter ring setting (A-Z)" onChange={(e) => handleChange(e)} required={data.function === 'enigma'} />
+                </div>
+                <div className="w-full">
+                  <label htmlFor="position3">Initial position</label>
+                  <input type="text" id="position3" placeholder="Enter position setting (A-Z)" onChange={(e) => handleChange(e)} required={data.function === 'enigma'} />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="pairs">Plugboard pairs</label>
+                <input type="text" id="pairs" placeholder="Enter plugboard pairs (separated by coma, ex. AB,CD,EF)" onChange={(e) => handleChange(e)} />
+              </div>
             </div>
             <div className="flex gap-2 mt-6">
               <button type="submit" value="encrypt" className="bg-indigo-700 hover:bg-indigo-600 focus:bg-indigo-600">

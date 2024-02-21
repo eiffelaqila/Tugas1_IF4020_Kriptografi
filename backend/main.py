@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routes.affine import affine_router
 from routes.autokey_vigenere import autokey_vigenere_router
+from routes.enigma import enigma_router
 from routes.extended_vigenere import extended_vigenere_router
 from routes.hill import hill_router
 from routes.playfair import playfair_router
@@ -23,6 +24,7 @@ app.add_middleware(
 
 app.include_router(affine_router)
 app.include_router(autokey_vigenere_router)
+app.include_router(enigma_router)
 app.include_router(extended_vigenere_router)
 app.include_router(hill_router)
 app.include_router(playfair_router)
