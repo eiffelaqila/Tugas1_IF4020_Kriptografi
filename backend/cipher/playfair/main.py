@@ -60,7 +60,10 @@ def prepare_input(text):
         clean_text += text[i]
         if i < len(text) - 1 and text[i] == text[i+1]:
             clean_text += 'X'
-        i += 1
+            i += 1
+        else:
+            clean_text += text[i+1]
+            i += 2
     
     # If the number of letters in the text is odd, add 'x' at the end
     if len(clean_text) % 2 == 1:
