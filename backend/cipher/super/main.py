@@ -43,11 +43,10 @@ def decrypt(ciphertext, key):
     matrix = [['' for _ in range(num_columns)] for _ in range(num_rows)]
     # Mengisi matriks dengan teks terenkripsi secara berurutan
     k = 0
-    for i in range(num_columns):
-        col = sorted_columns[i]
-        for j in range(num_rows):
-            if j < num_rows - 1 or (j == num_rows - 1 and col + 1 < num_empty_cells):
-                matrix[j][col] = ciphertext[k]
+    for col in sorted_columns:
+        for row in range(num_rows):
+            if row < num_rows - 1 or (row == num_rows - 1 and col < num_columns - num_empty_cells):
+                matrix[row][col] = ciphertext[k]
                 k += 1
 
     decrypted_text_tc = ''
