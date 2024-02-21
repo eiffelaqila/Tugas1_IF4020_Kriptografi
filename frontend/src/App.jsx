@@ -84,6 +84,7 @@ function App() {
         )
 
         setLoading(false);
+        setError(undefined);
         setResult({
           text: response.data,
           base64: btoa(response.data),
@@ -108,7 +109,7 @@ function App() {
 
           const fileResponse = new File(
             [binaryData],
-            file ? `${cipherType}ed-${file.name}` : `${cipherType}ed-result`,
+            file ? `${cipherType}ed-${data.function}-${file.name}` : `${cipherType}ed-result`,
             {
               type: file ? file.type : 'text/plain',
             },
@@ -134,7 +135,7 @@ function App() {
 
         const fileResponse = new File(
           [response.data],
-          file ? `${cipherType}ed-${file.name}` : `${cipherType}ed-result`,
+          file ? `${cipherType}ed-${data.function}-${file.name}` : `${cipherType}ed-result`,
           {
             type: file ? file.type : 'text/plain',
           },
@@ -150,7 +151,11 @@ function App() {
       }
     } catch (e) {
       setLoading(false);
-      setError(e);
+      if (e.request.status === 400) {
+        setError(e.response.data.error);
+      } else {
+        setError(e.message);
+      }
     }
   }
 
@@ -229,9 +234,8 @@ function App() {
         </div>
         {error && (
           <div className="w-full py-2 my-4">
-            <div className="w-full p-4 mt-4 bg-red-100 border border-red-300 rounded-md">
-              <h2 className="text-xl font-bold text-gray-700">Error</h2>
-              <p>{JSON.stringify(error.message)}</p>
+            <div className="w-full p-4 mt-4 bg-red-100 border border-red-600 rounded-md">
+              <p className="text-xl font-semibold text-red-600">{JSON.stringify(error)}</p>
             </div>
           </div>
         )}

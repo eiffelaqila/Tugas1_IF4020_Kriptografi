@@ -1,6 +1,9 @@
 import numpy as np 
 
 def encrypt(plaintext, key):
+    if (round(len(key)**(1/2)) != len(key)**(1/2)):
+        raise Exception("Tidak bisa melakukan enkripsi: kunci tidak valid")
+
     # Gets the block size (n x n) of the key
     n = int(np.sqrt(len(key)))
     plaintext = prepare_input(plaintext, n)
@@ -28,7 +31,7 @@ def decrypt(ciphertext, key):
     determinant_inverse = mod_inverse(determinant % 26, 26)   
 
     if determinant_inverse is None:
-        return "Tidak bisa melakukan dekripsi: kunci tidak valid"
+        raise Exception("Tidak bisa melakukan dekripsi: kunci tidak valid")
 
     # Finds the inverse of the key
     key_inverse = (determinant_inverse * np.round(determinant * np.linalg.inv(key_matrix))).astype(int) % 26 

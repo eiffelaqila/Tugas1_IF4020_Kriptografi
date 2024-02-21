@@ -20,8 +20,8 @@ def decrypt(ciphertext, a, b):
     # Find the inverse modulo of a
     a_inv = mod_inverse(a, 26)
     if a_inv is None:
-        return "Tidak bisa melakukan dekripsi: kunci tidak valid"
-    
+        raise Exception("Tidak bisa melakukan dekripsi: kunci tidak valid")
+
     for char in ciphertext:
         if char.isalpha():
             # Convert letters into numbers 0-25
