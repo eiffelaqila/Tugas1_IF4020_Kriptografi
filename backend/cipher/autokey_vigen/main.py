@@ -1,10 +1,12 @@
+import re
+
 def encrypt(plaintext, key):
     """
     Returns the Auto-Key Vigenère encryption result of 
     the text specified with the given key.
     """
     plaintext = plaintext.upper()
-    key = key.upper()
+    key = "".join(re.split("[^A-Z]*", key.upper()))
     ciphertext = ''
     key_index = 0
 
@@ -32,7 +34,7 @@ def decrypt(ciphertext, key):
     the specified ciphertext with the given key.
     """
     ciphertext = ciphertext.upper()
-    key = key.upper()
+    key = "".join(re.split("[^A-Z]*", key.upper()))
     decrypted_text = ''
     key_index = 0
 
