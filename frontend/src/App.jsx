@@ -11,6 +11,7 @@ function App() {
     rotor1: "I",
     rotor2: "I",
     rotor3: "I",
+    pairs: "",
   })
   const [cipherType, setCipherType] = useState('');
 
